@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Ajax поиск по таблице в БД</title>
+		<link type="text/css" rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<div class="block">
+			<h1>Ajax поиск по таблице в БД</h1>
+			<p>Введите слово для поиска и нажмите «Искать!».</p>
+			<form id="search_form" method="POST" enctype="multipart/form-data">
+				<input type="text" name="text" placeholder="Слово для поиска"/>
+				<input type="button" name="button" value="Искать!" />
+				<span class="error"></span>
+			</form>
+			<div class="result"></div>
+		</div>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+		<script>
+			$("#search_form .error").hide();
+			$("input[name=button]").click(function(){
+				ajaxQuery();
+				return false;
+			});
+			$("input[name=text]").keypress(function(key){
+				if(key.keyCode==13){
+					ajaxQuery();
+					return false;
+				}
+			});
+			function ajaxQuery(){
+				var where = $("input[name=text]").val();
+				if (where == "") {
+					$("#search_form .error").html("Укажите слово для поиска!").show();
+				} else {
+					$("#search_form .error").hide();
+					$.post(
+						"search.php",
+						{where: where},
+						ajaxSuccess
+					);
+				}
+			}
+			function ajaxSuccess(data){
+				$(".result").html(data).show();
+			}
+		</script>
+	</body>
+</html>
