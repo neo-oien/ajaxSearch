@@ -1,10 +1,10 @@
 <?php 
 	// Данные для подключения
 	$host='localhost';
-	$database='u0010628_wprs';
-	$username='u0010628_oienusr';
-	$password='gO5X3TSE';
-	$table='dorohov';
+	$database='DATABASE';
+	$username='USERNAME';
+	$password='PASSWORD';
+	$table='TABLE';
 	// Подключение к БД
 	$connect = new mysqli($host, $username, $password, $database);
 	if ($connect->connect_errno) {printf("Не удалось подключиться: %s\n", $connect->connect_error); exit();}
@@ -37,7 +37,7 @@
 			$parents = "";
 			while($parent_id > 0){
 				if(!empty($parents)) {
-					$parents .= " / ";
+					$parents .= " &larr; ";
 				}
 				$query_parent = "SELECT `id`, `title`, `parent` FROM `".$table."` WHERE `id` = '".$parent_id."'";
 				$resourses_parent = $connect->query($query_parent);
@@ -46,7 +46,7 @@
 				$parent_id = $row_parent['parent'];
 			}
 			if(!empty($parents)) {
-				$parents = "<br>\n Родитель: ".$parents;
+				$parents = " &larr; ".$parents;
 			}
 			$message.= "<li><strong>".$row['title']."</strong> (id: <strong>".$row['id']."</strong>)".$parents."</li>\n";
 		}
