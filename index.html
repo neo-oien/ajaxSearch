@@ -7,18 +7,24 @@
 	</head>
 	<body>
 		<div class="block">
-			<h1>Ajax поиск по таблице в БД</h1>
+			<h2>Ajax экспорт страниц</h2>
+			<form id="copy_form" method="POST" enctype="multipart/form-data">
+				<label>Нажмите для экспорта страниц &rarr;<input type="button" name="copy" value="Экспортировать!" /></label>
+			</form>
+			<h2>Ajax поиск по таблице в БД</h2>
 			<p>Введите слово для поиска и нажмите «Искать!».</p>
 			<form id="search_form" method="POST" enctype="multipart/form-data">
 				<input type="text" name="text" placeholder="Слово для поиска"/>
 				<input type="button" name="button" value="Искать!" />
+				<input type="button" name="clear" value="Сбросить" />
 				<span class="error"></span>
 			</form>
 			<div class="result"></div>
 		</div>
+		<div class="wp-modal"><div class="modal"><img src="load.gif">Пожалуйста,<br> подождите</div></div>
 		<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 		<script>
-			$("#search_form .error").hide();
+			$(".error").hide();
 			$("input[name=button]").click(function(){
 				ajaxQuery();
 				return false;
@@ -29,21 +35,44 @@
 					return false;
 				}
 			});
+			$("input[name=copy]").click(function(){
+				ajaxCopyTable();
+				return false;
+			});
+			$("input[name=clear]").click(function(){
+				$(".result").empty().hide();
+				$("#search_form").trigger("reset");
+				return false;
+			});
 			function ajaxQuery(){
 				var where = $("input[name=text]").val();
 				if (where == "") {
 					$("#search_form .error").html("Укажите слово для поиска!").show();
 				} else {
 					$("#search_form .error").hide();
+					$(".wp-modal").show();
+					setTimeout(function(){
+						$.post(
+							"search.php",
+							{where: where, action:"search"},
+							ajaxSuccess
+						);
+					}, 500);
+				}
+			}
+			function ajaxCopyTable(){
+				$(".wp-modal").show();
+				setTimeout(function(){
 					$.post(
 						"search.php",
-						{where: where},
+						{action:"copy"},
 						ajaxSuccess
 					);
-				}
+				}, 500);
 			}
 			function ajaxSuccess(data){
 				$(".result").html(data).show();
+				$(".wp-modal").hide();
 			}
 		</script>
 	</body>
